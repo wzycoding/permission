@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--scan: 配置文件发生改变将重新加载,scanPeriod:加载间隔，只有scan为true才有效-->
+<configuration scan="true" scanPeriod="60 seconds">
+    <!--可以有多个appender、多个logger、只能有一个root-->
+
+    <!--指定什么形式输出-->
+    <!--STDOUT：标准化输出,输出到catalina.log-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--日志格式, 前五个字符-->
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+            </pattern>
+            <!--防止中文乱码配置-->
+            <charset>UTF-8</charset>
+        </encoder>
+
+    </appender>
+
+    <!--<appender name="permission" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<file>${catalina.home}/logs/permission.log</file>-->
+
+        <!--&lt;!&ndash;定时对日志文件进行压缩&ndash;&gt;-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>-->
+                <!--${catalina.home}/logs/permission.%d{yyyy-MM-dd}.log.gz-->
+            <!--</FileNamePattern>-->
+        <!--</rollingPolicy>-->
+
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+            <!--<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>-->
+        <!--</layout>-->
+    <!--</appender>-->
+
+    <!--以什么级别输出-->
+    <!--<logger>-->
+
+    <!--</logger>-->
+
+    <!--TRACE < DEBUG < INFO < WARN < ERROR-->
+    <!--如果日志级别设置info trace和debug不会输出-->
+
+    <!--<logger name="xxx" level="INFO">-->
+        <!--<appender ref="permission"></appender>-->
+    <!--</logger>-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="safeRowBoundsEnabled" value="true"/>
+        <setting name="cacheEnabled" value="false"/>
+        <!--自动生成主键id-->
+        <setting name="useGeneratedKeys" value="true"/>
+    </settings>
+
+    <!--<typeAliases>-->
+        <!--&lt;!&ndash;设置类别名&ndash;&gt;-->
+        <!--<typeAlias type="com.xx" alias="bb"/>-->
+    <!--</typeAliases>-->
+
+    <!--<plugins>-->
+        <!--&lt;!&ndash;请求的拦截器&ndash;&gt;-->
+        <!--<plugin interceptor=""></plugin>-->
+    <!--</plugins>-->
+
+    <!--<typeHandlers>-->
+        <!--&lt;!&ndash;如果本地的类无法和sql中的值进行映射的时候，可以通过typeHandler进行转换&ndash;&gt;-->
+        <!--<typeHandler handler=""/>-->
+    <!--</typeHandlers>-->
+
+</configuration>

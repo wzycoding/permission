@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+   <!--单独使用配置文件，变量占位-->
+   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+       <!--如果我要忽略掉一些，不能处理的占位-->
+       <property name="ignoreUnresolvablePlaceholders" value="true"/>
+       <!--从哪里取配置文件-->
+       <property name="locations">
+           <list>
+               <!--配置文件-->
+               <value>classpath:setting.properties</value>
+           </list>
+       </property>
+   </bean>
+
+    <import resource="classpath:redis.xml"/>
+   <!--配置数据源-->
+   <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+       <property name="driverClassName" value="${db.driverClassName}"/>
+       <property name="url" value="${db.url}"/>
+       <property name="username" value="${db.username}"/>
+       <property name="password" value="${db.password}"/>
+       <!--初始化大小-->
+       <property name="initialSize" value="3"/>
+       <!--最小空闲数量-->
+       <property name="minIdle" value="3"/>
+       <!--最大活跃数量-->
+       <property name="maxActive" value="20"/>
+       <!--最大超时时间-->
+       <property name="maxWait" value="60000"/>
+
+       <!--注入自定义filter-->
+       <property name="proxyFilters">
+           <list>
+               <ref bean="stat-filter"/>
+               <ref bean="wall-filter"/>
+           </list>
+       </property>
+       <!--过滤器-->
+       <property name="filters" value="stat,wall"/>
+   </bean>
+
+   <!--SqlSessionFactory-->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+       <!--mybatis配置文件的位置-->
+       <property name="configLocation" value="classpath:mybatis-config.xml"/>
+       <!--配置数据源-->
+       <property name="dataSource" ref="dataSource"/>
+       <!--配置Mapper文件的位置-->
+       <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+
+   </bean>
+
+   <!--扫描Mapper类-->
+   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+       <property name="basePackage" value="com.mmall.dao"/>
+       <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+   </bean>
+
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--指定数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--开启注解事务-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--配置druid filter stat,wall-->
+    <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <!--超过3000ms就说明是慢sql-->
+        <property name="slowSqlMillis" value="3000"/>
+        <!--发现是慢sql以log形式记录下来-->
+        <property name="logSlowSql" value="true"/>
+        <!--当我们记录sql的时候，显示了很多行可以merge到一起-->
+        <property name="mergeSql" value="true"/>
+    </bean>
+
+    <!--配置druid wall filter-->
+    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+        <!--db类型-->
+        <property name="dbType" value="mysql"/>
+        <!--配置-->
+        <property name="config" ref="wall-config"/>
+    </bean>
+
+    <!--配置bean-->
+    <bean id="wall-config" class="com.alibaba.druid.wall.WallConfig">
+        <!-- 批量sql -->
+        <property name="multiStatementAllow" value="true"/>
+    </bean>
+
+    <!--处理全局异常-->
+    <bean class="com.mmall.common.SpringExceptionResolver"/>
+
+</beans>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!--默认加载WEB-INF下的配置文件spring文件-->
+
+    <!--context上下文注解直接被使用-->
+    <context:annotation-config/>
+
+    <!--启动注解驱动的SpringMVC功能: @Component、@Service、@Controller这些都会被创建为bean-->
+    <mvc:annotation-driven/>
+
+    <mvc:interceptors>
+        <bean class="com.mmall.common.HttpInterceptor"/>
+    </mvc:interceptors>
+
+    <!--允许访问静态资源-->
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/bootstrap3.3.5/" mapping="/bootstrap3.3.5/**"/>
+    <mvc:resources location="/assets/" mapping="/assets/**"/>
+    <!--配置ztree访问-->
+    <mvc:resources location="/ztree/" mapping="/ztree/**"/>
+
+    <!--哪些路径下的注解被处理-->
+    <context:component-scan base-package="com.mmall.controller"/>
+    <context:component-scan base-package="com.mmall.service"/>
+
+    <!--配置关闭懒加载-->
+    <bean class="com.mmall.common.ApplicationContextHelper" lazy-init="false" />
+
+    <!--把请求进行映射-->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">-->
+
+    <!--</bean>-->
+
+    <!--当我们来一个请求时，我们应该以什么格式进行返回-->
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+
+    <!--更改json信息处理方式-->
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+
+    </bean>
+
+    <!--配置视图解析器，使用jsp渲染-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--路径前缀-->
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <!--路径后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+</beans>

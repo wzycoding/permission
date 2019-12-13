@@ -1,0 +1,131 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+  <display-name>Archetype Created Web Application</display-name>
+
+  <!--Spring beans 配置文件所在的目录-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!--Encoding请求过滤器-->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <!--编码格式-->
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <!--强制编码-->
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/</url-pattern>
+  </filter-mapping>
+
+  <!--druid filter: 配置拦截哪些请求-->
+  <filter>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+    <init-param>
+      <!--排除那些后缀的请求不过滤-->
+      <param-name>exclusions</param-name>
+      <param-value>*.js,*.css,*.jpg,*.png,*.ico,*.gif,/sys/druid/*</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+
+  <!--Spring MVC的配置-->
+  <servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  </servlet>
+
+  <!--Servlet映射-->
+  <!--如果url-pattern只是/， 只能拦截/hello、/login这种请求，无法拦截 /a.jsp
+    /*都会拦截，返回视图解析器还会进入到DispatcherServlet-->
+  <servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!--druid可视化界面-->
+  <servlet>
+    <servlet-name>DruidStatServlet</servlet-name>
+    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    <init-param>
+      <param-name>loginUsername</param-name>
+      <param-value>druid</param-value>
+    </init-param>
+    <init-param>
+      <param-name>loginPassword</param-name>
+      <param-value>druid</param-value>
+    </init-param>
+  </servlet>
+  <!--加sys为了处理权限校验，sys开头进行权限过滤-->
+  <servlet-mapping>
+    <servlet-name>DruidStatServlet</servlet-name>
+    <url-pattern>/sys/druid/*</url-pattern>
+  </servlet-mapping>
+
+  <!--登录过滤器-->
+  <filter>
+    <filter-name>loginFilter</filter-name>
+    <filter-class>com.mmall.filter.LoginFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>loginFilter</filter-name>
+    <url-pattern>/sys/*</url-pattern>
+    <url-pattern>/admin/*</url-pattern>
+  </filter-mapping>
+
+  <!--权限拦截filter-->
+  <filter>
+    <filter-name>aclControlFilter</filter-name>
+    <filter-class>com.mmall.filter.AclControlFilter</filter-class>
+    <init-param>
+      <param-name>targetFilterLifecycle</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>exclusionUrls</param-name>
+      <param-value>/sys/user/noAuth.page,/login.page</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>aclControlFilter</filter-name>
+    <url-pattern>/sys/*</url-pattern>
+    <url-pattern>/admin/*</url-pattern>
+  </filter-mapping>
+
+
+
+  <!--什么都不指定访问哪个目录-->
+  <welcome-file-list>
+    <welcome-file>/index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
