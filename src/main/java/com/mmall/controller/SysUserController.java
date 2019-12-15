@@ -73,4 +73,11 @@ public class SysUserController {
     public ModelAndView noAuth() {
         return new ModelAndView("noAuth");
     }
+
+
+    @RequestMapping("/index.page")
+    public ModelAndView index() {
+        ModelAndView mv = new ModelAndView("index");
+        return mv;
+    }
 }

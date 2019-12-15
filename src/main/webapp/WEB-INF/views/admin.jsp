@@ -80,7 +80,7 @@
 
         <ul class="nav nav-list">
             <li class="active">
-                <a class="popstyle" href="/sys/user/page.do" target="_blank">
+                <a class="popstyle" href="/sys/user/index.page" target="_blank">
                     <i class="menu-icon fa fa-tachometer"></i>
                     <span class="menu-text"> 首页 </span>
                 </a>

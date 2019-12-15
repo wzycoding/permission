@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
  */
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PageQuery {
     @Getter
     @Setter

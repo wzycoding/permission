@@ -31,6 +31,9 @@ public class SysDeptService {
     @Resource
     private SysUserMapper sysUserMapper;
 
+    @Resource
+    private SysLogService sysLogService;
+
     public void save(DeptParam param) {
         //参数校验
         BeanValidator.check(param);
@@ -52,6 +55,8 @@ public class SysDeptService {
 
         //insertSelective 不是全量插入，insert方法全量插入
         sysDeptMapper.insertSelective(dept);
+        //添加到操作日志表中
+        sysLogService.saveDeptLog(null, dept);
     }
 
     /**
@@ -94,6 +99,9 @@ public class SysDeptService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         updateWithChild(before, after);
+
+        //记录日志
+        sysLogService.saveDeptLog(before, after);
     }
 
 //    @Transactional

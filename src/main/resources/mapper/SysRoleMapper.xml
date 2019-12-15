@@ -25,7 +25,7 @@
     delete from sys_role
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.mmall.model.SysRole" >
+  <insert id="insert" parameterType="com.mmall.model.SysRole"  keyProperty="id" useGeneratedKeys="true" >
     insert into sys_role (id, name, type, 
       seq, status, remark, operator,
       operator_time, operator_ip)
@@ -33,7 +33,7 @@
       #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR}, 
       #{operatorTime,jdbcType=TIMESTAMP}, #{operatorIp,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.mmall.model.SysRole" >
+  <insert id="insertSelective" parameterType="com.mmall.model.SysRole"   keyProperty="id" useGeneratedKeys="true" >
     insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

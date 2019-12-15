@@ -32,7 +32,7 @@
     delete from sys_log
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.mmall.model.SysLogWithBLOBs" >
+  <insert id="insert" parameterType="com.mmall.model.SysLogWithBLOBs"  keyProperty="id" useGeneratedKeys="true" >
     insert into sys_log (id, type, target_id, 
       operator, operate_time, operate_ip, 
       status, old_value, new_value
@@ -42,7 +42,7 @@
       #{status,jdbcType=INTEGER}, #{oldValue,jdbcType=LONGVARCHAR}, #{newValue,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.mmall.model.SysLogWithBLOBs" >
+  <insert id="insertSelective" parameterType="com.mmall.model.SysLogWithBLOBs" keyProperty="id" useGeneratedKeys="true" >
     insert into sys_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -155,4 +155,41 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="countBySearchDto" parameterType="map" resultType="int">
+    SELECT count(1)
+    FROM sys_log
+    <include refid="queryConditions"/>
+  </select>
+
+  <select id="getPageListBySearchDto" parameterType="map" resultMap="ResultMapWithBLOBs">
+    SELECT <include refid="Blob_Column_List" />, <include refid="Base_Column_List"/>
+    FROM sys_log
+    <include refid="queryConditions"/>
+    ORDER BY operate_time DESC
+    limit #{page.offset}, #{page.pageSize}
+  </select>
+
+  <sql id="queryConditions">
+    <where>
+      <if test="dto.type != null">
+        and type = #{dto.type}
+      </if>
+      <if test="dto.beforeSeq != null and dto.beforeSeq != ''">
+        and old_value = #{dto.beforeSeg}
+      </if>
+      <if test="dto.afterSeq != null and dto.afterSeq != ''">
+        and new_value = #{dto.afterSeq}
+      </if>
+      <if test="dto.operator != null and dto.operator != ''">
+        and operator = #{dto.operator}
+      </if>
+      <if test="dto.fromTime != null">
+        and operate_time &gt;= #{dto.fromTime}
+      </if>
+      <if test="dto.toTime != null">
+        and operate_time &lt;= #{dto.toTime}
+      </if>
+    </where>
+  </sql>
 </mapper>

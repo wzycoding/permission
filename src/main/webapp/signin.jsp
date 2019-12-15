@@ -19,7 +19,7 @@
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
 
-    <title>登陆</title>
+    <title>登录</title>
 
     <!-- Bootstrap core CSS -->
     <link href="bootstrap3.3.5/css/bootstrap.min.css" rel="stylesheet">

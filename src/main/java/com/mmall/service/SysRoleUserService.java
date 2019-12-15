@@ -2,13 +2,17 @@ package com.mmall.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mmall.beans.LogType;
 import com.mmall.common.RequestHolder;
+import com.mmall.dao.SysLogMapper;
 import com.mmall.dao.SysRoleUserMapper;
 import com.mmall.dao.SysUserMapper;
+import com.mmall.model.SysLogWithBLOBs;
 import com.mmall.model.SysRole;
 import com.mmall.model.SysRoleUser;
 import com.mmall.model.SysUser;
 import com.mmall.util.IpUtil;
+import com.mmall.util.JsonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,9 @@ public class SysRoleUserService {
 
     @Resource
     private SysUserMapper sysUserMapper;
+
+    @Resource
+    private SysLogMapper sysLogMapper;
 
     public List<SysUser> getListByRoleId(int roleId) {
         List<Integer> userIdList = sysRoleUserMapper.getUserListByRoleId(roleId);
@@ -54,6 +61,7 @@ public class SysRoleUserService {
             }
         }
         updateRoleUsers(roleId, userIdList);
+        saveRoleUserLog(roleId, originUserIdList, userIdList);
     }
 
     @Transactional
@@ -77,5 +85,18 @@ public class SysRoleUserService {
             roleUserList.add(roleUser);
         }
         sysRoleUserMapper.batchInsert(roleUserList);
+    }
+
+    private void saveRoleUserLog(int roleId, List<Integer> before, List<Integer> after) {
+        SysLogWithBLOBs sysLog = new SysLogWithBLOBs();
+        sysLog.setType(LogType.TYPE_ROLE_USER);
+        sysLog.setTargetId(roleId);
+        sysLog.setOldValue(before == null ? "" : JsonMapper.obj2String(before));
+        sysLog.setNewValue(after == null ? "" : JsonMapper.obj2String(after));
+        sysLog.setOperator(RequestHolder.getCurrentUser().getUsername());
+        sysLog.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
+        sysLog.setOperateTime(new Date());
+        sysLog.setStatus(1);
+        sysLogMapper.insertSelective(sysLog);
     }
 }

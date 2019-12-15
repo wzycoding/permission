@@ -5,6 +5,7 @@ import com.mmall.common.RequestHolder;
 import com.mmall.dao.SysAclMapper;
 import com.mmall.dao.SysAclModuleMapper;
 import com.mmall.exception.ParamException;
+import com.mmall.model.SysAcl;
 import com.mmall.model.SysAclModule;
 import com.mmall.param.AclModuleParam;
 import com.mmall.util.BeanValidator;
@@ -32,6 +33,9 @@ public class SysAclModuleService {
     @Resource
     SysAclMapper sysAclMapper;
 
+    @Resource
+    SysLogService sysLogService;
+
     public void save(AclModuleParam param) {
         BeanValidator.check(param);
         if (checkExist(param.getParentId(), param.getName(), param.getId())) {
@@ -50,6 +54,7 @@ public class SysAclModuleService {
 
         //保存权限模块信息
         sysAclModuleMapper.insertSelective(aclModule);
+        sysLogService.saveAclModuleLog(null, aclModule);
     }
 
     public void update(AclModuleParam param) {
@@ -73,6 +78,9 @@ public class SysAclModuleService {
         after.setOperator(RequestHolder.getCurrentUser().getUsername());
         after.setOperateTime(new Date());
         updateWithChild(before, after);
+
+        //更新日志
+        sysLogService.saveAclModuleLog(before, after);
     }
 
     private void updateWithChild(SysAclModule before, SysAclModule after) {
