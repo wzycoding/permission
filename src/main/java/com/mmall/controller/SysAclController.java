@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 系统权限点controller
  * @author wzy
  * @version 1.0
  * @date 2019/12/7 13:30
